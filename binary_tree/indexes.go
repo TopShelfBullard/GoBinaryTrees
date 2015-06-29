@@ -1,21 +1,8 @@
 package binary_tree
 
 func GetIndexes(sliceToIndex []interface{}) ([]int) {
-	var currentIndexes [][]int
-	var allIndexes []int
-	var indexes []int
-
-	for n := 0; n  < len(sliceToIndex); n++ {
-		indexes = append(indexes, n)
-	}
-
-	rootIndex := getRoot(len(sliceToIndex))
-	allIndexes = append(allIndexes, rootIndex)
-
-	currentIndexes = append(currentIndexes, indexes[:rootIndex])
-	currentIndexes = append(currentIndexes, indexes[rootIndex + 1:])
-
-	return getEachLevel(allIndexes, currentIndexes)
+	sequentialIndexes := sequentialIndexesForLength(len(sliceToIndex))
+	return getEachLevel(buildInitialSlices(len(sliceToIndex), sequentialIndexes))
 }
 
 func getEachLevel(indexes []int, currentIndexes [][]int) ([]int) {
@@ -43,6 +30,21 @@ func getEachLevel(indexes []int, currentIndexes [][]int) ([]int) {
 	}
 
 	return getEachLevel(indexes, newIndexes)
+}
+
+func sequentialIndexesForLength(length int) (sequentialIndexes []int) {
+	for index := 0; index  < length; index++ {
+		sequentialIndexes = append(sequentialIndexes, index)
+	}
+	return
+}
+
+func buildInitialSlices(length int, sequentialIndexes []int) (allIndexes []int, currentIndexes [][]int) {
+	rootIndex := getRoot(length)
+	allIndexes = append(allIndexes, rootIndex)
+	currentIndexes = append(currentIndexes, sequentialIndexes[:rootIndex])
+	currentIndexes = append(currentIndexes, sequentialIndexes[rootIndex + 1:])
+	return
 }
 
 func isEven(number int) bool {
