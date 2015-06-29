@@ -7,14 +7,12 @@ import (
 
 func main() {
 	var numbers []interface{}
-	number := 0
-
-	for number < 1000 {
+	for number := 1; number <= 1000000; number++ {
 		numbers = append(numbers, number)
-		number++
 	}
 
-	indexes := binary_tree.GetIndexes(numbers)
-	fmt.Println(len(numbers))
-	fmt.Println(len(indexes))
+	perfectBinaryTreeIndexes := binary_tree.GetIndexes(numbers)
+
+	fmt.Println(len(numbers), ":", len(perfectBinaryTreeIndexes))
+	fmt.Println(perfectBinaryTreeIndexes)
 }

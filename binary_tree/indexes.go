@@ -1,67 +1,57 @@
 package binary_tree
 
-import (
-	"math"
-)
+func GetIndexes(sliceToIndex []interface{}) ([]int) {
+	var currentIndexes [][]int
+	var allIndexes []int
+	var indexes []int
 
-func GetIndexes(sliceToIndex []interface{}) (allIndexes []int) {
-	var currentIndexes []int
-	rootNodeIndex := getRoot(len(sliceToIndex))
-	currentIndexes = append(currentIndexes, rootNodeIndex)
-	allIndexes = append(allIndexes, rootNodeIndex)
+	for n := 0; n  < len(sliceToIndex); n++ {
+		indexes = append(indexes, n)
+	}
 
-	for len(currentIndexes) > 0 {
-		currentIndexes = getNext(currentIndexes)
-		if len(currentIndexes) > 0 {
-			for _, index := range currentIndexes {
-				allIndexes = append(allIndexes, index)
-			}
+	rootIndex := getRoot(len(sliceToIndex))
+	allIndexes = append(allIndexes, rootIndex)
+
+	currentIndexes = append(currentIndexes, indexes[:rootIndex])
+	currentIndexes = append(currentIndexes, indexes[rootIndex + 1:])
+
+	return getEachLevel(allIndexes, currentIndexes)
+}
+
+func getEachLevel(indexes []int, currentIndexes [][]int) ([]int) {
+	if len(currentIndexes) == 0 {
+		return indexes
+	}
+
+	var newIndexes [][]int
+
+	for _, current := range currentIndexes {
+		length := len(current)
+		midpoint := length / 2
+
+		if length > 0 {
+			indexes = append(indexes, current[midpoint])
+		}
+
+		if length > 1 {
+			newIndexes = append(newIndexes, current[:midpoint])
+		}
+
+		if length > 2 {
+			newIndexes = append(newIndexes, current[midpoint + 1:])
 		}
 	}
 
-	allIndexes = unOffByOneify(allIndexes, len(sliceToIndex))
-	return
+	return getEachLevel(indexes, newIndexes)
 }
 
-func unOffByOneify(wrongIndexes []int, expectedLength int) (rightIndexes []int) {
-	if len(wrongIndexes) < expectedLength {
-		wrongIndexes = append(wrongIndexes, expectedLength)
-	}
-
-	for _, wrongIndex := range wrongIndexes {
-		rightIndexes = append(rightIndexes, wrongIndex - 1)
-	}
-	return
-}
-
-func getNext(indexes []int) (newIndexes []int) {
-	var low, high, previousLow, previousHigh int
-	diff := getMiddle(indexes[0])
-
-	for _, index := range indexes {
-		low = index - diff
-		high = index + diff
-
-		if diff > 1 || (diff == 1 && thereWillNotBeDuplicates(low, high, previousLow, previousHigh)) {
-			newIndexes = append(newIndexes, low)
-			newIndexes = append(newIndexes, high)
-		}
-
-		previousLow = low
-		previousHigh = high
-	}
-
-	return
-}
-
-func thereWillNotBeDuplicates(low int, high int, previousLow int, previousHigh int) bool {
-	return low != previousLow && low != previousHigh && high != previousLow && high != previousHigh
-}
-
-func getMiddle(number int) int {
-	return int(math.Floor(float64(number / 2)))
+func isEven(number int) bool {
+	return (number / 2) + (number / 2) == number
 }
 
 func getRoot(number int) int {
-	return int(math.Floor(float64(number / 2)) + 1)
+	if isEven(number) {
+		return (number / 2) - 1
+	}
+	return (number / 2)
 }
